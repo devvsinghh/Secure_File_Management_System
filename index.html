@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ZenCrypt — Secure File Management System with encryption, 2FA, access control, and threat detection.">
+  <title>ZenCrypt — Secure File Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    if (localStorage.getItem('sv_darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body>
+
+<!-- ══════ ANIMATED BACKGROUND ══════ -->
+<div class="bg-anim-layer" id="bgAnimLayer">
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+  <div class="bg-orb"></div>
+</div>
+<script>
+// Create floating particles
+(function() {
+  const layer = document.getElementById('bgAnimLayer');
+  const colors = ['rgba(59,130,246,0.2)', 'rgba(139,92,246,0.18)', 'rgba(245,158,11,0.15)', 'rgba(99,102,241,0.15)'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'bg-particle';
+    const size = Math.random() * 4 + 2;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*15+10}s;
+      animation-delay:${Math.random()*-20}s;
+    `;
+    layer.appendChild(p);
+  }
+})();
+</script>
+
+<!-- ══════ TOAST CONTAINER ══════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ══════════════════════════════════════════════
+     AUTH SECTION — Login / Signup / 2FA
+     ══════════════════════════════════════════════ -->
+<section id="authSection" class="landing-page">
+
+  <!-- ═══ TOP NAVIGATION BAR ═══ -->
+  <nav class="landing-nav">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L3 7V12C3 17.55 6.84 22.74 12 24C17.16 22.74 21 17.55 21 12V7L12 2Z" fill="url(#shieldGrad)" stroke="rgba(251,146,60,0.4)" stroke-width="0.5"/>
+          <path d="M10 15.5L7.5 13L6.09 14.41L10 18.33L18 10.33L16.59 8.92L10 15.5Z" fill="white" opacity="0.95"/>
+          <defs>
+            <linearGradient id="shieldGrad" x1="3" y1="2" x2="21" y2="24" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#f97316"/>
+              <stop offset="50%" stop-color="#ea580c"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="nav-logo-text">ZenCrypt</span>
+    </div>
+
+    <div class="nav-team" style="display:flex; align-items:center; gap:20px;">
+      <button class="nav-btn" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode" style="background:var(--bg-tertiary); border:1px solid rgba(255,255,255,0.1); color:var(--text-primary); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; box-shadow:var(--shadow-sm); transition:var(--transition);">◑</button>
+      <div style="display:flex; align-items:center;">
+        <span class="nav-team-label">Built by</span>
+        <div class="nav-team-members">
+          <div class="team-member" title="Dewbrat">
+            <div class="team-avatar" style="background:linear-gradient(135deg,#E11D48,#BE123C);">D</div>
+            <span>Dewbrat</span>
+          </div>
+          <div class="team-member" title="Stuti">
+            <div class="team-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">S</div>
+            <span>Stuti</span>
+          </div>
+          <div class="team-member" title="Aakarsh">
+            <div class="team-avatar" style="background:linear-gradient(135deg,#EA580C,#0891b2);">A</div>
+            <span>Aakarsh</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO SECTION ═══ -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">🛡️ Enterprise-Grade Security</div>
+      <h1 class="hero-title">
+        Protect Your Files<br>
+        <span class="gradient-text">With Military-Grade Encryption</span>
+      </h1>
+      <p class="hero-subtitle">
+        ZenCrypt provides AES-256 encrypted file storage, two-factor authentication, 
+        real-time malware scanning, and role-based access control — all in one 
+        modern, intuitive platform.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-number">AES-256</div>
+          <div class="hero-stat-label">Encryption Standard</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">14+</div>
+          <div class="hero-stat-label">Threat Signatures</div>
+        </div>
+        <div class="hero-stat-divider"></div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">2FA</div>
+          <div class="hero-stat-label">Authentication</div>
+        </div>
+      </div>
+      <a class="hero-scroll-cta" onclick="document.getElementById('featuresSection').scrollIntoView({behavior:'smooth'})">
+        Scroll to explore ↓
+      </a>
+    </div>
+
+    <div class="hero-form-side">
+      <div class="auth-card" id="authCard">
+        <div class="logo">
+          <div class="shield-icon">🛡️</div>
+          <h1>ZenCrypt</h1>
+          <p>Secure File Management System</p>
+        </div>
+
+        <!-- ─── LOGIN FORM ─── -->
+        <form id="loginForm" onsubmit="return false;">
+          <div class="form-group">
+            <label for="loginUser">Username</label>
+            <input type="text" id="loginUser" placeholder="Enter your username" autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="loginPass">Password</label>
+            <input type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password">
+          </div>
+          <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">🔐 Sign In</button>
+          <p class="auth-toggle">Don't have an account? <a onclick="showRegister()">Create one</a></p>
+        </form>
+
+        <!-- ─── SIGNUP FORM ─── -->
+        <form id="registerForm" class="hidden" onsubmit="return false;">
+          <div class="form-group">
+            <label for="regUser">Username</label>
+            <input type="text" id="regUser" placeholder="Choose a username">
+          </div>
+          <div class="form-group">
+            <label for="regEmail">Email Address</label>
+            <input type="email" id="regEmail" placeholder="Enter your email">
+          </div>
+          <div class="form-group">
+            <label for="regPass">Password</label>
+            <input type="password" id="regPass" placeholder="Create a strong password" oninput="checkPasswordStrength(this.value)">
+            <div class="password-strength"><div class="bar" id="passStrengthBar"></div></div>
+            <div class="password-policy" id="passwordPolicy" style="display:none; margin-top:8px; font-size:11px; background:rgba(0,0,0,0.02); padding:10px; border-radius:6px; border:1px solid var(--border);">
+              <div id="pol-length" style="color:var(--text-muted);margin-bottom:4px">❌ 8+ characters</div>
+              <div id="pol-upper" style="color:var(--text-muted);margin-bottom:4px">❌ 1 uppercase letter</div>
+              <div id="pol-special" style="color:var(--text-muted);">❌ 1 special character</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="regPass2">Confirm Password</label>
+            <input type="password" id="regPass2" placeholder="Confirm your password">
+          </div>
+          <div class="form-group" style="display:flex;align-items:center;gap:12px;">
+            <button class="toggle" id="enable2faToggle" type="button" onclick="this.classList.toggle('active')"></button>
+            <label style="margin:0;cursor:pointer;font-size:13px;">Enable Two-Factor Authentication</label>
+          </div>
+          <button class="btn btn-primary" onclick="handleRegister()">🚀 Create Account</button>
+          <p class="auth-toggle">Already have an account? <a onclick="showLogin()">Sign in</a></p>
+        </form>
+
+        <!-- ─── 2FA VERIFICATION ─── -->
+        <div id="tfaForm" class="hidden">
+          <div id="otpDeliveryNotice" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:var(--radius);padding:14px;margin-bottom:18px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:6px;">📨</div>
+            <p style="color:var(--success);font-weight:600;font-size:13px;" id="otpDeliveryMsg">OTP sent to your email!</p>
+            <p style="color:var(--text-muted);font-size:11px;margin-top:4px;" id="otpDeliveryDetail">Check your inbox for the 6-digit code</p>
+          </div>
+          <p style="text-align:center;color:var(--text-secondary);margin-bottom:6px;font-weight:600;font-size:14px;">Two-Factor Verification</p>
+          <p style="text-align:center;color:var(--text-muted);font-size:12px;margin-bottom:18px;">Enter the 6-digit OTP code to continue</p>
+          <div id="otpSimulatedBox" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:var(--radius);padding:12px;margin-bottom:16px;text-align:center;">
+            <p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">📧 Simulated Email/SMS Delivery:</p>
+            <p style="font-size:22px;font-weight:800;letter-spacing:6px;color:var(--blue-400);" id="otpDisplayCode">------</p>
+            <p style="font-size:10px;color:var(--text-dim);margin-top:4px;">In production, this would be sent via email or SMS</p>
+          </div>
+          <div class="tfa-code-inputs" id="tfaInputs">
+            <input type="text" maxlength="1" oninput="tfaNext(this,0)" onkeydown="tfaBack(event,this,0)">
+            <input type="text" maxlength="1" oninput="tfaNext(this,1)" onkeydown="tfaBack(event,this,1)">
+            <input type="text" maxlength="1" oninput="tfaNext(this,2)" onkeydown="tfaBack(event,this,2)">
+            <input type="text" maxlength="1" oninput="tfaNext(this,3)" onkeydown="tfaBack(event,this,3)">
+            <input type="text" maxlength="1" oninput="tfaNext(this,4)" onkeydown="tfaBack(event,this,4)">
+            <input type="text" maxlength="1" oninput="tfaNext(this,5)" onkeydown="tfaBack(event,this,5)">
+          </div>
+          <div style="text-align:center;margin-bottom:16px;">
+            <p style="font-size:12px;color:var(--text-muted);" id="otpTimerText">Code expires in <span id="otpTimer" style="color:var(--warning);font-weight:700;">60s</span></p>
+          </div>
+          <button class="btn btn-primary" onclick="verify2FA()">✅ Verify & Sign In</button>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
+            <button class="btn btn-secondary btn-xs" onclick="resendOTP()" id="resendOtpBtn">🔄 Resend Code</button>
+            <button class="btn btn-secondary btn-xs" onclick="cancelOTP()">← Back to Login</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FEATURES SECTION ═══ -->
+  <div class="landing-section" id="featuresSection">
+    <div class="section-header">
+      <span class="section-badge">Core Capabilities</span>
+      <h2 class="section-title">Everything You Need to<br><span class="gradient-text">Manage Files Securely</span></h2>
+      <p class="section-subtitle">Built with defense-in-depth architecture — seven layers of protection between your data and any threat.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card" style="--delay:0.1s">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#F59E0B,#D97706);">🔐</div>
+        <h3>AES-256 Encryption</h3>
+        <p>Every file is encrypted with military-grade AES-256 before touching the disk. Keys are derived on-the-fly and never stored.</p>
+      </div>
+      <div class="feature-card" style="--delay:0.2s">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">📱</div>
+        <h3>Two-Factor Auth</h3>
+        <p>OTP-based 2FA adds a second verification layer. 60-second expiry, 3-attempt limit, and automatic lockout protection.</p>
+      </div>
+      <div class="feature-card" style="--delay:0.3s">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#EA580C,#0891b2);">🦠</div>
+        <h3>Malware Scanning</h3>
+        <p>Real-time signature-based scanning detects 14+ threat patterns including EICAR, shell exploits, SQL injection, and XSS.</p>
+      </div>
+      <div class="feature-card" style="--delay:0.4s">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">⚡</div>
+        <h3>Role-Based Access</h3>
+        <p>RBAC with Admin and User roles. Granular file permissions (read, write, admin) enforce least-privilege access.</p>
+      </div>
+      <div class="feature-card" style="--delay:0.5s">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);">🛡️</div>
+        <h3>Overflow Protection</h3>
+        <p>Five-layer input validation: length limits, null-byte stripping, pattern detection, payload caps, and type blocking.</p>
+      </div>
+      <div class="feature-card" style="--delay:0.6s">
+        <div class="feature-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);">📋</div>
+        <h3>Activity Logging</h3>
+        <p>Every action logged with user ID and IP address. Separate threat logs track security events for forensic analysis.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ HOW IT WORKS ═══ -->
+  <div class="landing-section">
+    <div class="section-header">
+      <span class="section-badge">How It Works</span>
+      <h2 class="section-title">Secure by Design,<br><span class="gradient-text">Simple to Use</span></h2>
+      <p class="section-subtitle">From upload to download, every step is protected by multiple security layers.</p>
+    </div>
+
+    <div class="steps-container">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-content">
+          <h3>Authenticate</h3>
+          <p>Sign in with bcrypt-hashed credentials. Optional 2FA adds an OTP verification step for enhanced security. JWT tokens manage your session statelessly.</p>
+        </div>
+        <div class="step-visual">🔑</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-content">
+          <h3>Upload & Scan</h3>
+          <p>Drop your files — each one is scanned against 14+ malware signatures, checked for buffer overflow patterns, and validated for safe file types before storage.</p>
+        </div>
+        <div class="step-visual">📤</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-content">
+          <h3>Encrypt & Store</h3>
+          <p>Clean files are encrypted with AES-256 using a unique IV per file. Encrypted data is saved to disk; only metadata lives in the database.</p>
+        </div>
+        <div class="step-visual">🔒</div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-card">
+        <div class="step-number">04</div>
+        <div class="step-content">
+          <h3>Share & Control</h3>
+          <p>Share files with granular permissions — read-only, read-write, or full admin. RBAC middleware enforces access on every API call.</p>
+        </div>
+        <div class="step-visual">🔗</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECURITY PILLARS ═══ -->
+  <div class="landing-section">
+    <div class="section-header">
+      <span class="section-badge">Security Architecture</span>
+      <h2 class="section-title">Seven Layers of<br><span class="gradient-text">Defense-in-Depth</span></h2>
+    </div>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 1</div>
+        <h4>Input Validation</h4>
+        <p>Length limits, regex patterns, null-byte stripping on every input field.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 2</div>
+        <h4>Authentication</h4>
+        <p>bcrypt hashing (12 rounds), JWT tokens, optional 2FA with OTP.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 3</div>
+        <h4>Authorization</h4>
+        <p>RBAC middleware checks role hierarchy before every protected route.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 4</div>
+        <h4>Encryption</h4>
+        <p>AES-256-GCM (client) + AES-256-CBC (server) with unique IV per file.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 5</div>
+        <h4>Threat Detection</h4>
+        <p>14+ malware signatures, overflow patterns, SQL injection and XSS scanning.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 6</div>
+        <h4>Rate Limiting</h4>
+        <p>Auth endpoints capped at 10 – 20 requests/min per IP to prevent brute-force.</p>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-layer">Layer 7</div>
+        <h4>Audit Logging</h4>
+        <p>20+ event types logged with timestamps and IP address for forensics.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TECH STACK ═══ -->
+  <div class="landing-section">
+    <div class="section-header">
+      <span class="section-badge">Technology Stack</span>
+      <h2 class="section-title">Built With<br><span class="gradient-text">Modern Technologies</span></h2>
+    </div>
+
+    <div class="tech-grid">
+      <div class="tech-item"><div class="tech-icon">⚙️</div><span>Node.js</span></div>
+      <div class="tech-item"><div class="tech-icon">🚀</div><span>Express.js</span></div>
+      <div class="tech-item"><div class="tech-icon">🗄️</div><span>SQLite</span></div>
+      <div class="tech-item"><div class="tech-icon">🔐</div><span>bcrypt</span></div>
+      <div class="tech-item"><div class="tech-icon">🎟️</div><span>JWT</span></div>
+      <div class="tech-item"><div class="tech-icon">🔒</div><span>AES-256</span></div>
+      <div class="tech-item"><div class="tech-icon">🛡️</div><span>Helmet.js</span></div>
+      <div class="tech-item"><div class="tech-icon">✅</div><span>Web Crypto</span></div>
+    </div>
+  </div>
+
+  <!-- ═══ BOTTOM CTA ═══ -->
+  <div class="landing-section landing-cta">
+    <div class="cta-glow"></div>
+    <h2 class="section-title">Ready to Secure<br><span class="gradient-text">Your Files?</span></h2>
+    <p class="section-subtitle" style="max-width:500px;">Create your account in seconds. The first user automatically becomes the system administrator.</p>
+    <button class="btn btn-primary btn-lg" onclick="document.querySelector('.hero-form-side').scrollIntoView({behavior:'smooth'}); setTimeout(showRegister, 500);">
+      🚀 Get Started — It's Free
+    </button>
+  </div>
+
+  <!--  SYSTEM MEMBERS (PUBLIC ROSTER)  -->
+  <div class="landing-section" id="systemMembersSection">
+    <div class="section-header">
+      <span class="section-badge">System Directory</span>
+      <h2>Meet Our Users</h2>
+      <p>A transparent overview of the authenticated members within the ZenCrypt ecosystem.</p>
+    </div>
+    
+    <div class="members-container">
+      <div class="members-column">
+        <h3 class="members-column-title admin-title"><span class="icon">👑</span> System Administrators</h3>
+        <div id="adminsGrid" class="members-grid">
+          <!-- Admins rendered via JS -->
+        </div>
+      </div>
+      
+      <div class="members-column">
+        <h3 class="members-column-title user-title"><span class="icon">🛡️</span> Regular Users</h3>
+        <div id="usersGrid" class="members-grid">
+          <!-- Users rendered via JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="landing-footer">
+    <p>ZenCrypt © 2025–2026 — Secure File Management System</p>
+    <p>Built with 🛡️ defense-in-depth architecture</p>
+  </footer>
+
+</section>
+
+<!-- ══════════════════════════════════════════════
+     MAIN APPLICATION
+     ══════════════════════════════════════════════ -->
+<section id="appSection" class="app-layout hidden">
+
+  <!-- ─── MOBILE HAMBURGER ─── -->
+  <button class="mobile-hamburger" id="mobileHamburger" onclick="toggleMobileSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
+
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar" id="mainSidebar">
+    <div class="brand">
+      <div class="icon">🛡️</div>
+      <span>ZenCrypt</span>
+      <div class="notif-bell" onclick="toggleNotifPanel(event)" title="Notifications">
+        🔔
+        <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+      </div>
+    </div>
+    <div class="notif-panel" id="notifPanel" style="display:none;">
+      <div class="notif-panel-header">
+        <h4>🔔 Notifications</h4>
+        <button class="btn btn-secondary btn-xs" onclick="clearNotifications()">Clear All</button>
+      </div>
+      <div class="notif-list" id="notifList">
+        <p style="color:var(--text-muted);text-align:center;padding:20px;font-size:12px;">No notifications yet</p>
+      </div>
+    </div>
+    <div class="nav-section-label">Navigation</div>
+    <div class="nav-items">
+      <div class="nav-item active" onclick="switchView('dashboard')" id="navDashboard">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="switchView('files')" id="navFiles">
+        <span class="icon">📁</span> My Files
+      </div>
+      <div class="nav-item" onclick="switchView('upload')" id="navUpload">
+        <span class="icon">⬆️</span> Upload Files
+      </div>
+      <div class="nav-item" onclick="switchView('shared')" id="navShared">
+        <span class="icon">🔗</span> Shared Files
+      </div>
+      <div class="nav-item" onclick="switchView('security')" id="navSecurity">
+        <span class="icon">🔒</span> Security Monitor
+      </div>
+      <div class="nav-item" onclick="switchView('profile')" id="navProfile">
+        <span class="icon">👤</span> My Profile
+      </div>
+      <div class="nav-item" onclick="switchView('admin')" id="navAdmin" style="display:none;">
+        <span class="icon">⚡</span> Admin Panel
+      </div>
+      <div class="nav-item" onclick="switchView('settings')" id="navSettings">
+        <span class="icon">⚙️</span> Settings
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-info" onclick="switchView('profile')">
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div class="details">
+          <div class="name" id="sidebarUsername">User</div>
+          <div class="role"><span id="sidebarRoleBadge">🟢 Authenticated</span></div>
+        </div>
+      </div>
+      <div class="storage-quota" id="storageQuota">
+        <div class="storage-info">
+          <span class="storage-label">Storage</span>
+          <span class="storage-value" id="storageUsed">0 B / 100 MB</span>
+        </div>
+        <div class="storage-bar">
+          <div class="storage-fill" id="storageFill" style="width:0%"></div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-sm" style="width:100%;margin-bottom:8px;" onclick="toggleDarkMode()" id="themeToggleBtn">🌙 Dark Mode</button>
+      <button class="btn btn-danger btn-sm" style="width:100%" onclick="handleLogout()">🚪 Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="main-content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div id="viewDashboard" class="view-section">
+      <div class="page-header">
+        <div>
+          <h2>📊 Dashboard</h2>
+          <p>Overview of your secure file system</p>
+        </div>
+        <div class="search-bar">
+          <span>🔍</span>
+          <input type="text" placeholder="Search files..." id="globalSearch" oninput="searchFiles(this.value)">
+        </div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">📁</div>
+          <div class="stat-value" id="statFiles">0</div>
+          <div class="stat-label">Total Files</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">🔒</div>
+          <div class="stat-value" id="statEncrypted">0</div>
+          <div class="stat-label">Encrypted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">🔗</div>
+          <div class="stat-value" id="statShared">0</div>
+          <div class="stat-label">Shared</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">⚠️</div>
+          <div class="stat-value" id="statThreats">0</div>
+          <div class="stat-label">Threats Blocked</div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="card chart-card">
+          <div class="card-header"><h3>📁 File Type Distribution</h3></div>
+          <div class="card-body" style="display:flex;align-items:center;justify-content:center;gap:24px;padding:24px;">
+            <canvas id="fileTypeChart" width="180" height="180"></canvas>
+            <div id="fileTypeLegend" style="font-size:12px;"></div>
+          </div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-header"><h3>🛡️ Security Overview</h3></div>
+          <div class="card-body" style="padding:24px;">
+            <canvas id="securityChart" width="400" height="180"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <h3>📋 Recent Activity</h3>
+          <button class="btn btn-secondary btn-xs" onclick="switchView('files')">View All Files →</button>
+        </div>
+        <div class="card-body activity-log" id="activityLog">
+          <p style="color:var(--text-muted);text-align:center;padding:30px;">No activity yet. Upload or create a file to get started.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FILES ═══ -->
+    <div id="viewFiles" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>📁 My Files</h2>
+          <p>Manage your secure files</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-secondary btn-sm" onclick="createFolder()">📁 New Folder</button>
+          <button class="btn btn-secondary btn-sm" onclick="openModal('createFileModal')">📝 Create File</button>
+          <button class="btn btn-primary btn-sm" onclick="switchView('upload')">⬆️ Upload New</button>
+        </div>
+      </div>
+      <!-- Breadcrumb -->
+      <div class="folder-breadcrumb" id="folderBreadcrumb">
+        <span class="breadcrumb-item active" onclick="navigateFolder(null)">🏠 All Files</span>
+      </div>
+      <!-- Folders Grid -->
+      <div class="folders-grid" id="foldersGrid"></div>
+      <div class="card">
+        <div class="card-header">
+          <h3>📂 <span id="filesViewTitle">All Files</span></h3>
+          <div class="search-bar" style="width:220px">
+            <span>🔍</span>
+            <input type="text" placeholder="Filter files..." oninput="filterFileTable(this.value)">
+          </div>
+        </div>
+        <table id="fileTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Size</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Modified</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="fileTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ UPLOAD ═══ -->
+    <div id="viewUpload" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>⬆️ Upload Files</h2>
+          <p>Files are scanned for threats and encrypted automatically</p>
+        </div>
+      </div>
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(event)">
+        <span class="upload-icon">☁️</span>
+        <h3>Drop files here or click to browse</h3>
+        <p>Files will be scanned for malware and encrypted before storage</p>
+        <span class="upload-hint">Supports all file types • Max 50MB</span>
+        <input type="file" id="fileInput" multiple hidden onchange="handleFileSelect(event)">
+      </div>
+      <div id="uploadScanResults"></div>
+    </div>
+
+    <!-- ═══ SHARED ═══ -->
+    <div id="viewShared" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>🔗 Shared Files</h2>
+          <p>Files shared with you and by you</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>📤 Shared With Others</h3></div>
+        <table>
+          <thead>
+            <tr><th>File</th><th>Shared With</th><th>Permission</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="sharedTableBody"></tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <div class="card-header"><h3>📥 Shared With Me</h3></div>
+        <table>
+          <thead>
+            <tr><th>File</th><th>Shared By</th><th>Permission</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="sharedWithMeBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ SECURITY ═══ -->
+    <div id="viewSecurity" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>🔒 Security Monitor</h2>
+          <p>Real-time threat detection and security status</p>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="runSecurityScan()">🔍 Run Full Scan</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-value" id="secClean">0</div>
+          <div class="stat-label">Clean Files</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">🦠</div>
+          <div class="stat-value" id="secMalware">0</div>
+          <div class="stat-label">Malware Detected</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">💥</div>
+          <div class="stat-value" id="secOverflow">0</div>
+          <div class="stat-label">Buffer Overflow</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">🔐</div>
+          <div class="stat-value" id="secEncTotal">0</div>
+          <div class="stat-label">Encrypted Files</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>🚨 Threat Log</h3></div>
+        <div class="card-body" id="threatLog">
+          <p style="color:var(--text-muted);text-align:center;padding:30px;">No threats detected — your system is clean! ✅</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>🛡️ Security Scan</h3></div>
+        <div class="card-body">
+          <p style="color:var(--text-secondary);font-size:13px;margin-bottom:4px;">Scan all files for potential security threats including malware, buffer overflow, and injection attacks.</p>
+          <div class="scan-progress"><div class="fill" id="scanFill"></div></div>
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px;" id="scanStatus">Ready to scan</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ USER PROFILE ═══ -->
+    <div id="viewProfile" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>👤 My Profile</h2>
+          <p>Manage your account details and security</p>
+        </div>
+      </div>
+
+      <!-- Profile Hero -->
+      <div class="profile-hero">
+        <div class="profile-avatar-lg" id="profileAvatarLg">U</div>
+        <div class="profile-details">
+          <h2 id="profileName">User</h2>
+          <div class="profile-email" id="profileEmail">user@example.com</div>
+          <div class="profile-meta">
+            <span>📅 Joined: <strong id="profileJoined">—</strong></span>
+            <span>🔐 2FA: <strong id="profile2FA">Disabled</strong></span>
+            <span>🛡️ Role: <strong>User</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Stats -->
+      <div class="profile-stats-row">
+        <div class="profile-stat">
+          <div class="p-stat-val" id="pStatFiles">0</div>
+          <div class="p-stat-label">Files Uploaded</div>
+        </div>
+        <div class="profile-stat">
+          <div class="p-stat-val" id="pStatEncrypted">0</div>
+          <div class="p-stat-label">Encrypted</div>
+        </div>
+        <div class="profile-stat">
+          <div class="p-stat-val" id="pStatShared">0</div>
+          <div class="p-stat-label">Files Shared</div>
+        </div>
+        <div class="profile-stat">
+          <div class="p-stat-val" id="pStatThreats">0</div>
+          <div class="p-stat-label">Threats Blocked</div>
+        </div>
+        <div class="profile-stat">
+          <div class="p-stat-val" id="pStatStorage">0 B</div>
+          <div class="p-stat-label">Storage Used</div>
+        </div>
+      </div>
+
+      <!-- Security Settings -->
+      <div class="card">
+        <div class="card-header"><h3>🔐 Security Overview</h3></div>
+        <div class="card-body">
+          <div class="settings-row">
+            <div class="setting-info">
+              <h4>Two-Factor Authentication</h4>
+              <p>Add an extra layer of security to your account</p>
+            </div>
+            <button class="toggle" id="profile2faToggle" onclick="toggleSettings2FA()"></button>
+          </div>
+          <div class="settings-row">
+            <div class="setting-info">
+              <h4>Auto-Encrypt Uploads</h4>
+              <p>All uploaded files are encrypted with AES-256-GCM</p>
+            </div>
+            <button class="toggle active" id="profileEncryptToggle" onclick="this.classList.toggle('active')"></button>
+          </div>
+          <div class="settings-row">
+            <div class="setting-info">
+              <h4>Malware Scanning</h4>
+              <p>Automatically scan files for malicious content on upload</p>
+            </div>
+            <button class="toggle active" id="profileMalwareToggle" onclick="this.classList.toggle('active')"></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="card">
+        <div class="card-header"><h3>🔑 Change Password</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="profileCurrentPass" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="profileNewPass" placeholder="Enter new password" oninput="checkPasswordStrength(this.value)">
+          </div>
+          <button class="btn btn-primary btn-sm" style="width:auto" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+
+      <!-- Recent Activity on Profile -->
+      <div class="card">
+        <div class="card-header"><h3>📋 My Recent Activity</h3></div>
+        <div class="card-body activity-log" id="profileActivityLog" style="max-height:250px;overflow-y:auto;">
+          <p style="color:var(--text-muted);text-align:center;padding:20px;">No activity yet</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ADMIN PANEL (visible to admin role only) ═══ -->
+    <div id="viewAdmin" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>⚡ Admin Panel</h2>
+          <p>System-wide management — Admin access only</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary btn-sm" onclick="generatePdfReport()">📄 Generate PDF Report</button>
+          <button class="btn btn-secondary btn-sm" onclick="refreshAdminPanel()">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- System Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon blue">👥</div>
+          <div class="stat-value" id="adminStatUsers">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">◆</div>
+          <div class="stat-value" id="adminStatAdmins">0</div>
+          <div class="stat-label">Admins</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon yellow">📁</div>
+          <div class="stat-value" id="adminStatFiles">0</div>
+          <div class="stat-label">System Files</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon red">🦠</div>
+          <div class="stat-value" id="adminStatThreats">0</div>
+          <div class="stat-label">Total Threats</div>
+        </div>
+      </div>
+
+      <!-- User Management -->
+      <div class="card">
+        <div class="card-header">
+          <h3>👥 User Management</h3>
+          <span class="badge badge-blue">RBAC</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>2FA</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminUserTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- All Files -->
+      <div class="card">
+        <div class="card-header">
+          <h3>📁 All System Files</h3>
+          <span class="badge badge-green" id="adminFilesCount">0 files</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Owner</th>
+              <th>Size</th>
+              <th>Encrypted</th>
+              <th>Scan</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adminFileTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:40px;">Loading files...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- System Logs -->
+      <div class="card">
+        <div class="card-header"><h3>📋 System Activity Log</h3></div>
+        <div class="card-body activity-log" id="adminActivityLog" style="max-height:350px;overflow-y:auto;">
+          <p style="color:var(--text-muted);text-align:center;padding:30px;">Loading activity...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SETTINGS ═══ -->
+    <div id="viewSettings" class="view-section hidden">
+      <div class="page-header">
+        <div>
+          <h2>⚙️ Settings</h2>
+          <p>Manage your security preferences</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>🔐 Security Settings</h3></div>
+        <div class="card-body">
+          <div class="settings-row">
+            <div class="setting-info">
+              <h4>Two-Factor Authentication</h4>
+              <p>Add an extra layer of security to your account</p>
+            </div>
+            <button class="toggle" id="settings2faToggle" onclick="toggleSettings2FA()"></button>
+          </div>
+          <div class="settings-row">
+            <div class="setting-info">
+              <h4>Auto-Encrypt Uploads</h4>
+              <p>Encrypt files automatically when uploaded</p>
+            </div>
+            <button class="toggle active" id="autoEncryptToggle" onclick="this.classList.toggle('active')"></button>
+          </div>
+          <div class="settings-row">
+            <div class="setting-info">
+              <h4>Malware Scanning</h4>
+              <p>Scan all uploads for threats automatically</p>
+            </div>
+            <button class="toggle active" id="malwareScanToggle" onclick="this.classList.toggle('active')"></button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>🔑 Change Password</h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="currentPassInput" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="newPassInput" placeholder="Enter new password">
+          </div>
+          <button class="btn btn-primary btn-sm" style="width:auto" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     MODALS
+     ══════════════════════════════════════════════ -->
+
+<!-- File View Modal -->
+<div class="modal-overlay" id="fileViewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="viewModalTitle">📄 View File</h3>
+      <button class="modal-close" onclick="closeModal('fileViewModal')">✕</button>
+    </div>
+    <div id="viewModalContent" style="white-space:pre-wrap;background:var(--bg-input);padding:18px;border-radius:var(--radius);font-size:13px;max-height:400px;overflow-y:auto;border:1px solid var(--border);font-family:'Courier New',monospace;line-height:1.7;"></div>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button class="btn btn-secondary btn-sm" onclick="downloadCurrentFile()">⬇️ Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- File Edit Modal -->
+<div class="modal-overlay" id="fileEditModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="editModalTitle">✏️ Edit File</h3>
+      <button class="modal-close" onclick="closeModal('fileEditModal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>File Content</label>
+      <textarea id="editModalContent" rows="14" style="font-family:'Courier New',monospace;resize:vertical;line-height:1.7;"></textarea>
+    </div>
+    <button class="btn btn-primary btn-sm" style="width:auto" onclick="saveFileEdit()">💾 Save Changes</button>
+  </div>
+</div>
+
+<!-- Metadata Modal -->
+<div class="modal-overlay" id="metadataModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 File Metadata</h3>
+      <button class="modal-close" onclick="closeModal('metadataModal')">✕</button>
+    </div>
+    <div class="meta-grid" id="metadataGrid"></div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🔗 Share File</h3>
+      <button class="modal-close" onclick="closeModal('shareModal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>Share with (username)</label>
+      <input type="text" id="shareUsername" placeholder="Enter username or click a user below">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:7px;letter-spacing:0.3px;text-transform:uppercase;">Available Users</label>
+      <div id="availableUsersList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+    <div class="form-group">
+      <label>Permission Level</label>
+      <select id="sharePermission">
+        <option value="read">🔍 Read Only</option>
+        <option value="write">✏️ Read & Write</option>
+        <option value="admin">◈ Full Access</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-sm" style="width:auto" onclick="shareFile()">🔗 Share File</button>
+    <div class="divider"></div>
+    <h4 style="font-size:14px;margin-bottom:10px;font-weight:700;">Current Access</h4>
+    <div class="perm-list" id="permList"></div>
+  </div>
+</div>
+
+<!-- Create File Modal -->
+<div class="modal-overlay" id="createFileModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📝 Create New File</h3>
+      <button class="modal-close" onclick="closeModal('createFileModal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label>File Name</label>
+      <input type="text" id="newFileName" placeholder="e.g. document.txt, report.md">
+    </div>
+    <div class="form-group">
+      <label>Content</label>
+      <textarea id="newFileContent" rows="10" placeholder="Enter file content..." style="font-family:'Courier New',monospace;resize:vertical;"></textarea>
+    </div>
+    <div class="form-group" style="display:flex;align-items:center;gap:12px;">
+      <button class="toggle active" id="newFileEncrypt" type="button" onclick="this.classList.toggle('active')"></button>
+      <label style="margin:0;cursor:pointer;font-size:13px;">Encrypt this file (AES-256-GCM)</label>
+    </div>
+    <button class="btn btn-primary btn-sm" style="width:auto" onclick="createNewFile()">✅ Create File</button>
+  </div>
+</div>
+<!-- Session Timeout Modal -->
+<div class="modal-overlay" id="sessionTimeoutModal" style="z-index: 9999;">
+  <div class="modal" style="max-width: 400px; text-align: center; padding: 40px 24px;">
+    <div style="font-size: 48px; margin-bottom: 16px;">⏱️</div>
+    <h3 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">Session Expiring</h3>
+    <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">You've been inactive for a while. You will be logged out in <strong style="color:var(--text-primary)" id="sessionCountdown">60</strong> seconds.</p>
+    <div style="display:flex; gap:12px; justify-content: center;">
+      <button class="btn btn-secondary btn-sm" onclick="handleLogout()">Log Out Now</button>
+      <button class="btn btn-primary btn-sm" onclick="extendSession()">Stay Logged In</button>
+    </div>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
