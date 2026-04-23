@@ -197,6 +197,3 @@ node tests/test_suite.js
 - Add Docker support and environment-based configuration for easier deployment
 - Implement audit export and compliance reporting
 
-
-- 
-
